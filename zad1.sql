@@ -1,7 +1,7 @@
 SELECT
 	o.order_id,
     o.total_amount,
-    SUM(oi.quantity * oi.price_per_unit) AS TotalPrice
+    SUM(oi.quantity * oi.price_per_unit) AS total_price
 FROM orders o
 	JOIN order_items oi
 		ON o.order_id = oi.order_id
