@@ -1,0 +1,33 @@
+public static void WriteImageLabelFile(string labelFilePath, byte[] labelData,
+    ImageFormat labelImageFormat, int rotation = 0)
+{
+    try
+    {
+        if (labelData == null || labelData.Length == 0)
+            throw new ArgumentException("Image data is missing.");
+
+        if (string.IsNullOrWhiteSpace(labelFilePath))
+            throw new ArgumentException("Invalid file path.");
+
+        RotateFlipType rotationType;
+
+        if (rotation == 90)
+            rotationType = RotateFlipType.Rotate90FlipNone;
+        else if (rotation == 180)
+            rotationType = RotateFlipType.Rotate180FlipNone;
+        else if (rotation == 270)
+            rotationType = RotateFlipType.Rotate270FlipNone;
+        else
+            throw new ArgumentException("Rotation must be 90, 180, or 270 degrees.");
+
+        Image labelImage = Image.FromStream(new MemoryStream(labelData));
+
+        labelImage.RotateFlip(rotationType);
+
+        labelImage.Save(labelFilePath, labelImageFormat);
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine("Image processing error: " + e.Message);
+    }
+}
