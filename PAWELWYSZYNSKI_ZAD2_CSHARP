@@ -1,0 +1,43 @@
+public List<TaskItem> GetAllTasks()
+{
+    var tasks = new List<TaskItem>();
+
+    using (var connection = new SQLiteConnection(ConnectionString))
+    {
+        connection.Open();
+        string selectQuery = "SELECT Id, Title, Description, DueDate, IsCompleted FROM Tasks";
+
+        using (var command = new SQLiteCommand(selectQuery, connection))
+        using (var reader = command.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                tasks.Add(new TaskItem
+                {
+                    Id = Convert.ToInt32(reader["Id"]),
+                    Title = reader["Title"].ToString(),
+                    Description = reader["Description"].ToString(),
+                    DueDate = DateTime.Parse(reader["DueDate"].ToString()),
+                    IsCompleted = Convert.ToInt32(reader["IsCompleted"]) == 1
+                });
+            }
+        }
+    }
+
+    return tasks;
+}
+
+public void DeleteTask(int id)
+{
+    using (var connection = new SQLiteConnection(ConnectionString))
+    {
+        connection.Open();
+        string deleteQuery = "DELETE FROM Tasks WHERE Id = @Id";
+
+        using (var command = new SQLiteCommand(deleteQuery, connection))
+        {
+            command.Parameters.AddWithValue("@Id", id);
+            command.ExecuteNonQuery();
+        }
+    }
+}
